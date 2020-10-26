@@ -1,6 +1,11 @@
 version: 2.1
+orbs:
+  node: circleci/node@1.1
 jobs:
   build:
+    executor:
+      name: node/default
+      tag: '10.4'
     docker: 
       - image: cimg/node:14.10.1 # the primary container, where your job's commands are run
         auth:
@@ -8,5 +13,8 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - checkout # check out the code in the project directory
+      - node/with-cache:
+          steps:
+            - run: npm install
+      - run: npm run test
       - run: echo "hello world" # run the `echo` command
-
